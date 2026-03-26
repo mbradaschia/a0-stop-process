@@ -1,0 +1,7 @@
+name: stop_process
+title: Stop Process
+description: Adds a Stop button to the chat input actions bar that cancels the currently running agent process in the active session.
+version: 1.0.0
+settings_sections: []
+per_project_config: false
+per_agent_config: false

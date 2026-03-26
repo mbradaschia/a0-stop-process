@@ -1,0 +1,77 @@
+<html>
+<head>
+  <script type="module">
+    import { callJsonApi } from "/js/api.js";
+    import { store as chatsStore } from "/components/sidebar/chats/chats-store.js";
+
+    globalThis._stopProcess = async function () {
+      const ctxid = globalThis.getContext?.();
+      if (!ctxid) {
+        console.error("[StopProcess] No context ID");
+        return;
+      }
+
+      try {
+        const res = await callJsonApi("/plugins/stop_process/stop_process", {
+          context: ctxid,
+        });
+
+        if (res?.ok) {
+          if (chatsStore?.selectedContext) {
+            chatsStore.selectedContext.running = false;
+          }
+          if (typeof globalThis.poll === "function") {
+            setTimeout(() => globalThis.poll(), 300);
+          }
+          if (globalThis.toast) {
+            globalThis.toast(
+              res.was_running ? "Process stopped." : "No process was running.",
+              res.was_running ? "success" : "info"
+            );
+          }
+        } else {
+          if (globalThis.toast) {
+            globalThis.toast(res?.message || "Failed to stop process.", "error");
+          }
+        }
+      } catch (e) {
+        if (globalThis.toast) {
+          globalThis.toast("Error stopping process: " + e.message, "error");
+        }
+      }
+    };
+  </script>
+</head>
+<body>
+  <button
+    type="button"
+    class="text-button stop-process-btn"
+    @click="globalThis._stopProcess && globalThis._stopProcess()"
+    :disabled="!$store.chats?.selectedContext?.running"
+    :class="{ 'stop-active': $store.chats?.selectedContext?.running }"
+    title="Stop the currently running process"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14" aria-hidden="true">
+      <rect x="6" y="6" width="12" height="12" rx="1" />
+    </svg>
+    <p>Stop</p>
+  </button>
+
+  <style>
+    .stop-process-btn {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .stop-process-btn.stop-active {
+      color: #e74c3c !important;
+      opacity: 0.8 !important;
+      cursor: pointer !important;
+    }
+    .stop-process-btn.stop-active:hover {
+      background-color: rgba(231, 76, 60, 0.15) !important;
+      color: #c0392b !important;
+      opacity: 1 !important;
+    }
+  </style>
+</body>
+</html>
