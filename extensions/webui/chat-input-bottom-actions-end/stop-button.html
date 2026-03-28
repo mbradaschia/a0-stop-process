@@ -58,10 +58,12 @@
   </button>
 
   <style>
+    /* Stop button: default disabled state */
     .stop-process-btn {
       opacity: 0.4;
       cursor: not-allowed;
     }
+    /* Stop button: active (running) state */
     .stop-process-btn.stop-active {
       color: #e74c3c !important;
       opacity: 0.8 !important;
@@ -71,6 +73,19 @@
       background-color: rgba(231, 76, 60, 0.15) !important;
       color: #c0392b !important;
       opacity: 1 !important;
+    }
+
+    /*
+     * Mobile: hide ALL button text labels (p and span) in the actions bar.
+     * The built-in CSS only hides <p> at max-width:640px, but the Pause
+     * button uses <span> for its label, so it doesn't get hidden.
+     * This rule ensures all labels are hidden on mobile, keeping only icons.
+     */
+    @media (max-width: 768px) {
+      .chat-bottom-actions-bar .text-button span,
+      .chat-bottom-actions-bar .text-button p {
+        display: none !important;
+      }
     }
   </style>
 </body>
